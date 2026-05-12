@@ -24,10 +24,11 @@ def scan_and_export(targets, input_file, output_file):
     print(f"[*] Starting scan...")
     print("[*] Please wait, the scan may take a while depending on the number of targets...")
     
-    # Sử dụng nmap với đầu ra XML (-oX -)
-    # -sV: Dò tìm phiên bản dịch vụ đang chạy
-    # -T4: Tăng tốc độ scan
-    command = ['nmap', '-sV', '-T4', '-oX', '-'] + target_args
+    
+    
+    
+    
+    command = ['nmap', '-sV', '-T4', '-p-', '-oX', '-'] + target_args
     try:
         # Chạy lệnh nmap và lấy output
         result = subprocess.run(command, capture_output=True, text=True, check=True, encoding='utf-8')
@@ -46,7 +47,7 @@ def scan_and_export(targets, input_file, output_file):
     data = []
     
     try:
-        # Parse kết quả XML trả về từ nmap
+        
         root = ET.fromstring(xml_output)
         
         for host in root.findall('host'):
@@ -55,7 +56,7 @@ def scan_and_export(targets, input_file, output_file):
                 if address.get('addrtype') == 'ipv4':
                     ip_address = address.get('addr')
             
-            # Nếu không tìm thấy IP v4, có thể bỏ qua hoặc xử lý ipv6
+            
             if not ip_address:
                 continue
                 
@@ -90,11 +91,11 @@ def scan_and_export(targets, input_file, output_file):
         print("[-] No open ports found on the specified targets.")
         return
 
-    # Tạo DataFrame từ mảng dữ liệu
+    
     df = pd.DataFrame(data)
     
     try:
-        # Xuất ra file Excel
+        
         df.to_excel(output_file, index=False)
         print(f"[+] SUCCESS! Exported {len(data)} open port results to file: {output_file}")
     except Exception as e:
